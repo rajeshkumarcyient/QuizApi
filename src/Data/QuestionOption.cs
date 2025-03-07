@@ -9,13 +9,14 @@ namespace QuizAppApi.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OptionId { get; set; }
 
-        [Required]
+        [Required, ForeignKey("Question")]
         public int QuestionId { get; set; }
 
         [Required]
         public string OptionText { get; set; } = string.Empty;
 
         public bool IsCorrect { get; set; } = false;
+
         public Question Question { get; set; } = null!;
 
     }

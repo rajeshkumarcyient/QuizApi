@@ -18,12 +18,13 @@ namespace QuizAppApi.Data
         [Required]
         public int DurationMinutes { get; set; } = 30;
 
-        [Required]
+        [Required, ForeignKey("User")]
         public int CreatedBy { get; set; }
+        public User User { get; set; } = null!;
 
+        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public User Creator { get; set; } = null!;
         public ICollection<Question> Questions { get; set; } = new List<Question>();
         public ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
        

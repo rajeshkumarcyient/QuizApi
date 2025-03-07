@@ -9,12 +9,13 @@ namespace QuizAppApi.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ResponseId { get; set; }
 
-        [Required]
+        [Required, ForeignKey("QuizAttempt")]
         public int AttemptId { get; set; }
 
-        [Required]
+        [Required, ForeignKey("Question")]
         public int QuestionId { get; set; }
 
+        [ForeignKey("SelectedOption")]
         public int? SelectedOptionId { get; set; }
 
         public string? UserAnswerText { get; set; }

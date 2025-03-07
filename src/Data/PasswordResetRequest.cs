@@ -9,15 +9,18 @@ namespace QuizAppApi.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ResetId { get; set; }
 
-        [Required]
+        [Required, ForeignKey("User")]
         public int UserId { get; set; }
 
-        [Required]
+        [Required, MaxLength(255)]
         public string ResetToken { get; set; } = string.Empty;
 
         [Required]
         public DateTime ExpiresAt { get; set; }
+
+        [Required]
+        public bool IsUsed { get; set; } = false;
+
         public User User { get; set; } = null!;
-      
     }
 }

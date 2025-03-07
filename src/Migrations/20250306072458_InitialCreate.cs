@@ -41,8 +41,9 @@ namespace QuizAppApi.Migrations
                     ResetId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    ResetToken = table.Column<string>(type: "longtext", nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    ResetToken = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    IsUsed = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,15 +67,14 @@ namespace QuizAppApi.Migrations
                     Description = table.Column<string>(type: "longtext", nullable: true),
                     DurationMinutes = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    CreatorUserId = table.Column<int>(type: "int", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Quizzes", x => x.QuizId);
                     table.ForeignKey(
-                        name: "FK_Quizzes_Users_CreatorUserId",
-                        column: x => x.CreatorUserId,
+                        name: "FK_Quizzes_Users_CreatedBy",
+                        column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -167,8 +167,7 @@ namespace QuizAppApi.Migrations
                     QuestionId = table.Column<int>(type: "int", nullable: false),
                     SelectedOptionId = table.Column<int>(type: "int", nullable: true),
                     UserAnswerText = table.Column<string>(type: "longtext", nullable: true),
-                    IsCorrect = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    QuizAttemptAttemptId = table.Column<int>(type: "int", nullable: false)
+                    IsCorrect = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -185,8 +184,8 @@ namespace QuizAppApi.Migrations
                         principalColumn: "QuestionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserResponses_QuizAttempts_QuizAttemptAttemptId",
-                        column: x => x.QuizAttemptAttemptId,
+                        name: "FK_UserResponses_QuizAttempts_AttemptId",
+                        column: x => x.AttemptId,
                         principalTable: "QuizAttempts",
                         principalColumn: "AttemptId",
                         onDelete: ReferentialAction.Cascade);
@@ -219,9 +218,9 @@ namespace QuizAppApi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Quizzes_CreatorUserId",
+                name: "IX_Quizzes_CreatedBy",
                 table: "Quizzes",
-                column: "CreatorUserId");
+                column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserResponses_AttemptId",
@@ -232,11 +231,6 @@ namespace QuizAppApi.Migrations
                 name: "IX_UserResponses_QuestionId",
                 table: "UserResponses",
                 column: "QuestionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserResponses_QuizAttemptAttemptId",
-                table: "UserResponses",
-                column: "QuizAttemptAttemptId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserResponses_SelectedOptionId",

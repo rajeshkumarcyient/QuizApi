@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using QuizAppApi.Data;
+using QuizAppApi.DTO;
 using QuizAppApi.Repositories;
 
 namespace QuizAppApi.Services
@@ -19,7 +20,8 @@ namespace QuizAppApi.Services
         {
             return await _userRepository.GetUserByEmailAsync(email);
         }
-        public async Task<bool> RegisterUserAsync(User user)
+
+        public async Task<bool> RegisterUserAsync(UserDTO user)
         {
             var existingUser = await _userRepository.GetUserByEmailAsync(user.Email);
             if (existingUser != null)

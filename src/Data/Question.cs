@@ -9,7 +9,7 @@ namespace QuizAppApi.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int QuestionId { get; set; }
 
-        [Required]
+        [Required, ForeignKey("Quiz")]
         public int QuizId { get; set; }
 
         [Required]

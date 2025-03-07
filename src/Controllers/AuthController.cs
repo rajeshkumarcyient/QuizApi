@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using QuizAppApi.Data;
+using QuizAppApi.DTO;
 using QuizAppApi.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -22,7 +23,7 @@ namespace QuizAppApi.Controllers
         {
            _userService = userService;
            _passwordHasher = passwordHasher;
-            _config = config;
+           _config = config;
         }
 
         [HttpPost("login")]
@@ -39,13 +40,13 @@ namespace QuizAppApi.Controllers
                 return Unauthorized(new { message = "Invalid email or password" });
             }
 
-            var token = GenerateJwtToken(user.Email);
+            var token = GenerateJwtToken(user.UserId, user.Email, user.Role);
             return Ok(new { token });
 
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] User user)
+        public async Task<IActionResult> Register([FromBody] UserDTO user)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -58,20 +59,30 @@ namespace QuizAppApi.Controllers
 
             return Ok(new { message = "User registered successfully" });
         }
-
-        private string GenerateJwtToken(string username)
-        { // iuser pred f language, user roles
+       
+        private string GenerateJwtToken(int userId, string username, string userRole)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
+
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name, username),
+                new(ClaimTypes.NameIdentifier, userId.ToString()),
+                new(ClaimTypes.Role, userRole) 
+            };
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
     }
 
     public class LoginModel

@@ -12,26 +12,27 @@ namespace QuizAppApi.Data
 
         [Required]
         [MaxLength(100)]
-        public string FirstName { get; set; } = string.Empty;
+        public string FirstName { get; set; }
+
         [Required]
         [MaxLength(100)]
-        public string LastName { get; set; } = string.Empty; 
+        public string LastName { get; set; }
         
         [Required]
         [EmailAddress]
         [MaxLength(255)]
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; }
 
         [Required]
-        public string PasswordHash { get; set; } = string.Empty;
+        public string PasswordHash { get; set; }
 
         [Required]
         public string Role { get; set; } = "User";
 
         [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
-        public ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
+        public ICollection<Quiz> Quizzes { get; set; }
+        public ICollection<QuizAttempt> QuizAttempts { get; set; }
     }
 }

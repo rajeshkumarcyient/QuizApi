@@ -11,7 +11,7 @@ using QuizAppApi.Data;
 namespace QuizAppApi.Migrations
 {
     [DbContext(typeof(QuizDbContext))]
-    [Migration("20250227104450_InitialCreate")]
+    [Migration("20250306072458_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -31,9 +31,13 @@ namespace QuizAppApi.Migrations
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("ResetToken")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -108,9 +112,6 @@ namespace QuizAppApi.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<int>("CreatorUserId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
@@ -124,7 +125,7 @@ namespace QuizAppApi.Migrations
 
                     b.HasKey("QuizId");
 
-                    b.HasIndex("CreatorUserId");
+                    b.HasIndex("CreatedBy");
 
                     b.ToTable("Quizzes");
                 });
@@ -217,9 +218,6 @@ namespace QuizAppApi.Migrations
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("QuizAttemptAttemptId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("SelectedOptionId")
                         .HasColumnType("int");
 
@@ -231,8 +229,6 @@ namespace QuizAppApi.Migrations
                     b.HasIndex("AttemptId");
 
                     b.HasIndex("QuestionId");
-
-                    b.HasIndex("QuizAttemptAttemptId");
 
                     b.HasIndex("SelectedOptionId");
 
@@ -274,13 +270,13 @@ namespace QuizAppApi.Migrations
 
             modelBuilder.Entity("QuizAppApi.Data.Quiz", b =>
                 {
-                    b.HasOne("QuizAppApi.Data.User", "Creator")
+                    b.HasOne("QuizAppApi.Data.User", "User")
                         .WithMany("Quizzes")
-                        .HasForeignKey("CreatorUserId")
+                        .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Creator");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("QuizAppApi.Data.QuizAttempt", b =>
@@ -304,15 +300,15 @@ namespace QuizAppApi.Migrations
 
             modelBuilder.Entity("QuizAppApi.Data.UserResponse", b =>
                 {
-                    b.HasOne("QuizAppApi.Data.Question", "Question")
+                    b.HasOne("QuizAppApi.Data.QuizAttempt", "QuizAttempt")
                         .WithMany("UserResponses")
-                        .HasForeignKey("QuestionId")
+                        .HasForeignKey("AttemptId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QuizAppApi.Data.QuizAttempt", "QuizAttempt")
+                    b.HasOne("QuizAppApi.Data.Question", "Question")
                         .WithMany("UserResponses")
-                        .HasForeignKey("QuizAttemptAttemptId")
+                        .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
